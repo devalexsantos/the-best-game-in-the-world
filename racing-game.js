@@ -1065,10 +1065,29 @@ function enableFreeRoam() {
         display: block;
         z-index: 100;
     `;
+    const restartInstruction = isMobileDevice()
+        ? '<button id="free-roam-restart" style="margin-top: 10px; padding: 8px 16px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">🔄 Race Again</button>'
+        : '<div style="font-size: 14px; margin-top: 5px;">Press R to race again</div>';
+
     freeRoamMessage.innerHTML = `
         <div>🚗 FREE ROAM MODE</div>
-        <div style="font-size: 14px; margin-top: 5px;">Press R to race again</div>
+        ${restartInstruction}
     `;
+
+    // Add restart button handler for mobile
+    if (isMobileDevice()) {
+        setTimeout(() => {
+            const restartBtn = document.getElementById('free-roam-restart');
+            if (restartBtn) {
+                restartBtn.onclick = () => {
+                    freeRoamMessage.remove();
+                    gameState.freeRoam = false;
+                    messageElement.style.display = 'none';
+                    startCountdown();
+                };
+            }
+        }, 100);
+    }
     document.body.appendChild(freeRoamMessage);
 
     // Reactivate vehicle controls
@@ -1110,7 +1129,7 @@ function gameOver(won, reason = null) {
                     transition: background-color 0.3s;
                 ">🚗 Free Roam</button>
             </div>
-            <div style="font-size: 14px; margin-top: 10px; color: #ccc;">Or press R to restart</div>
+            ${isMobileDevice() ? '' : '<div style="font-size: 14px; margin-top: 10px; color: #ccc;">Or press R to restart</div>'}
         `;
 
         // Check and save best time
@@ -1170,10 +1189,42 @@ function gameOver(won, reason = null) {
         }, 100);
     } else {
         const message = reason || "YOU CRASHED!";
+        const restartText = isMobileDevice() ? '' : '<div style="font-size: 18px; margin-top: 10px;">Press R to try again</div>';
         messageElement.innerHTML = `
             <div style="color: #ff0000;">${message}</div>
-            <div style="font-size: 18px; margin-top: 10px;">Press R to try again</div>
+            ${restartText}
+            <button id="restart-after-crash" style="
+                margin-top: 20px;
+                padding: 15px 30px;
+                font-size: 20px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 10px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            ">🔄 TRY AGAIN</button>
         `;
+
+        // Add event listener for restart button
+        setTimeout(() => {
+            const restartBtn = document.getElementById('restart-after-crash');
+            if (restartBtn) {
+                restartBtn.onclick = () => {
+                    messageElement.style.display = 'none';
+                    startCountdown();
+                };
+
+                // Add hover effect
+                restartBtn.onmouseover = () => {
+                    restartBtn.style.backgroundColor = '#45a049';
+                };
+                restartBtn.onmouseout = () => {
+                    restartBtn.style.backgroundColor = '#4CAF50';
+                };
+            }
+        }, 100);
     }
 
     messageElement.style.display = 'block';
