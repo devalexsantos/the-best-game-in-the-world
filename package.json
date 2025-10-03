@@ -1,0 +1,23 @@
+{
+  "name": "3d-character-game",
+  "version": "1.0.0",
+  "description": "3D Racing Game with Three.js - obstacle course challenge",
+  "main": "game.js",
+  "type": "module",
+  "scripts": {
+    "start": "npx http-server . -p 8080 -o",
+    "dev": "npx http-server . -p 8080"
+  },
+  "keywords": [
+    "threejs",
+    "3d",
+    "game",
+    "webgl"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "dependencies": {}
+}

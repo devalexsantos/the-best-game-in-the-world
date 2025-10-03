@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Racing Game - Three.js</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="loading-screen">
+        <div class="loader"></div>
+        <p>Loading...</p>
+    </div>
+
+    <div id="game-ui">
+        <div class="controls-info">
+            <h3>🏁 OBSTACLE RACE</h3>
+            <p>W / ↑ - Accelerate</p>
+            <p>S / ↓ - Reverse / Brake</p>
+            <p>A / ← - Turn left</p>
+            <p>D / → - Turn right</p>
+            <p>Space - Drift</p>
+            <p style="margin-top: 10px; color: #4ade80;">Goal: Reach the house!</p>
+            <p style="color: #f87171;">Avoid the trees!</p>
+        </div>
+    </div>
+
+    <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+    <script type="module" src="racing-game.js?v=6.3"></script>
+</body>
+</html>
