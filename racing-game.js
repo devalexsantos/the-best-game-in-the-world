@@ -74,10 +74,26 @@ let countdownElement, timerElement, messageElement, recordElement;
 // Explosion particles
 let explosionParticles = [];
 
+// Mobile controls state
+let mobileControls = {};
+
+// Check if device is mobile
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+           (window.innerWidth <= 768);
+}
+
 // Initialization
 function init() {
     console.log('=== RACING GAME V5.0 - OBSTACLE COURSE ===');
     console.log('Goal: Reach the house without hitting the trees!');
+
+    // Prevent scrolling on mobile
+    if (isMobileDevice()) {
+        document.body.style.touchAction = 'none';
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+    }
 
     // Create UI elements
     createUIElements();
@@ -131,6 +147,11 @@ function init() {
 
 // Create interface elements
 function createUIElements() {
+    // Create mobile controls if on mobile device
+    if (isMobileDevice()) {
+        createMobileControls();
+    }
+
     // Countdown
     countdownElement = document.createElement('div');
     countdownElement.id = 'countdown';
@@ -221,6 +242,259 @@ function createUIElements() {
         `;
     }
     document.body.appendChild(recordElement);
+}
+
+// Create mobile control buttons
+function createMobileControls() {
+    // Create container for all controls
+    const controlsContainer = document.createElement('div');
+    controlsContainer.id = 'mobile-controls';
+    controlsContainer.style.cssText = `
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1001;
+        pointer-events: none;
+    `;
+
+    // Create left controls (directional pad)
+    const leftControls = document.createElement('div');
+    leftControls.style.cssText = `
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        width: 150px;
+        height: 150px;
+        pointer-events: all;
+    `;
+
+    // Create directional buttons
+    const btnUp = createControlButton('↑', 'up', {
+        position: 'absolute',
+        top: '0px',
+        left: '50px',
+        width: '50px',
+        height: '50px'
+    });
+
+    const btnDown = createControlButton('↓', 'down', {
+        position: 'absolute',
+        bottom: '0px',
+        left: '50px',
+        width: '50px',
+        height: '50px'
+    });
+
+    const btnLeft = createControlButton('←', 'left', {
+        position: 'absolute',
+        top: '50px',
+        left: '0px',
+        width: '50px',
+        height: '50px'
+    });
+
+    const btnRight = createControlButton('→', 'right', {
+        position: 'absolute',
+        top: '50px',
+        right: '0px',
+        width: '50px',
+        height: '50px'
+    });
+
+    leftControls.appendChild(btnUp);
+    leftControls.appendChild(btnDown);
+    leftControls.appendChild(btnLeft);
+    leftControls.appendChild(btnRight);
+
+    // Create right controls (action buttons)
+    const rightControls = document.createElement('div');
+    rightControls.style.cssText = `
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        pointer-events: all;
+    `;
+
+    // Create action buttons
+    const btnAccelerate = createControlButton('GAS', 'accelerate', {
+        position: 'relative',
+        width: '80px',
+        height: '80px',
+        marginBottom: '10px',
+        backgroundColor: 'rgba(0, 200, 0, 0.5)',
+        fontSize: '18px'
+    });
+
+    const btnBrake = createControlButton('BRAKE', 'brake', {
+        position: 'relative',
+        width: '80px',
+        height: '80px',
+        marginBottom: '10px',
+        backgroundColor: 'rgba(200, 0, 0, 0.5)',
+        fontSize: '16px'
+    });
+
+    const btnDrift = createControlButton('DRIFT', 'drift', {
+        position: 'relative',
+        width: '80px',
+        height: '80px',
+        backgroundColor: 'rgba(200, 200, 0, 0.5)',
+        fontSize: '16px'
+    });
+
+    rightControls.appendChild(btnAccelerate);
+    rightControls.appendChild(btnBrake);
+    rightControls.appendChild(btnDrift);
+
+    // Add mobile control instructions
+    const instructions = document.createElement('div');
+    instructions.style.cssText = `
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: white;
+        font-size: 12px;
+        text-align: center;
+        background: rgba(0,0,0,0.5);
+        padding: 5px 10px;
+        border-radius: 5px;
+        pointer-events: none;
+    `;
+    instructions.innerHTML = '📱 MOBILE CONTROLS ACTIVE';
+    controlsContainer.appendChild(instructions);
+
+    // Add controls to container
+    controlsContainer.appendChild(leftControls);
+    controlsContainer.appendChild(rightControls);
+
+    // Add container to body
+    document.body.appendChild(controlsContainer);
+
+    // Store references
+    mobileControls = {
+        container: controlsContainer,
+        buttons: {
+            up: btnUp,
+            down: btnDown,
+            left: btnLeft,
+            right: btnRight,
+            accelerate: btnAccelerate,
+            brake: btnBrake,
+            drift: btnDrift
+        }
+    };
+}
+
+// Helper function to create control button
+function createControlButton(label, action, styles) {
+    const button = document.createElement('button');
+    button.textContent = label;
+    button.dataset.action = action;
+
+    // Default button styles
+    const defaultStyles = {
+        position: 'absolute',
+        backgroundColor: 'rgba(255, 255, 255, 0.3)',
+        border: '2px solid rgba(255, 255, 255, 0.6)',
+        borderRadius: '10px',
+        color: 'white',
+        fontSize: '20px',
+        fontWeight: 'bold',
+        cursor: 'pointer',
+        userSelect: 'none',
+        webkitUserSelect: 'none',
+        touchAction: 'none',
+        transition: 'all 0.1s',
+        textShadow: '2px 2px 4px rgba(0,0,0,0.7)',
+        boxShadow: '0 4px 6px rgba(0,0,0,0.3)'
+    };
+
+    // Merge styles
+    const finalStyles = { ...defaultStyles, ...styles };
+
+    // Apply styles
+    let cssText = '';
+    for (const [key, value] of Object.entries(finalStyles)) {
+        const cssKey = key.replace(/[A-Z]/g, m => '-' + m.toLowerCase());
+        cssText += `${cssKey}: ${value}; `;
+    }
+    button.style.cssText = cssText;
+
+    // Add touch event handlers
+    button.addEventListener('touchstart', handleTouchStart, { passive: false });
+    button.addEventListener('touchend', handleTouchEnd, { passive: false });
+    button.addEventListener('touchcancel', handleTouchEnd, { passive: false });
+
+    // Also add mouse events for desktop testing
+    button.addEventListener('mousedown', handleTouchStart);
+    button.addEventListener('mouseup', handleTouchEnd);
+    button.addEventListener('mouseleave', handleTouchEnd);
+
+    return button;
+}
+
+// Handle touch/mouse start on control buttons
+function handleTouchStart(event) {
+    event.preventDefault();
+    const action = event.target.dataset.action;
+
+    // Visual feedback
+    event.target.style.transform = 'scale(0.9)';
+    event.target.style.backgroundColor = event.target.style.backgroundColor.replace('0.3', '0.6');
+
+    // Set control state based on action
+    switch(action) {
+        case 'up':
+        case 'accelerate':
+            vehicleState.accelerating = true;
+            break;
+        case 'down':
+        case 'brake':
+            vehicleState.braking = true;
+            break;
+        case 'left':
+            vehicleState.steeringLeft = true;
+            break;
+        case 'right':
+            vehicleState.steeringRight = true;
+            break;
+        case 'drift':
+            vehicleState.handbrake = true;
+            break;
+    }
+}
+
+// Handle touch/mouse end on control buttons
+function handleTouchEnd(event) {
+    event.preventDefault();
+    const action = event.target.dataset.action;
+
+    // Reset visual feedback
+    event.target.style.transform = 'scale(1)';
+    event.target.style.backgroundColor = event.target.style.backgroundColor.replace('0.6', '0.3');
+
+    // Reset control state based on action
+    switch(action) {
+        case 'up':
+        case 'accelerate':
+            vehicleState.accelerating = false;
+            break;
+        case 'down':
+        case 'brake':
+            vehicleState.braking = false;
+            break;
+        case 'left':
+            vehicleState.steeringLeft = false;
+            break;
+        case 'right':
+            vehicleState.steeringRight = false;
+            break;
+        case 'drift':
+            vehicleState.handbrake = false;
+            break;
+    }
 }
 
 // Setup lighting
@@ -518,6 +792,11 @@ function startCountdown() {
     // First reset car to correct position and orientation
     resetCar();
 
+    // Hide mobile controls during countdown
+    if (mobileControls.container) {
+        mobileControls.container.style.display = 'none';
+    }
+
     gameState.isCountingDown = true;
     gameState.countdown = 3;
     countdownElement.style.display = 'block';
@@ -547,6 +826,11 @@ function startRace() {
     gameState.hasLost = false;
     timerElement.style.display = 'block';
     messageElement.style.display = 'none';
+
+    // Show mobile controls when race starts
+    if (mobileControls.container) {
+        mobileControls.container.style.display = 'block';
+    }
 
     // Don't reset car here, it's already in correct position
     // resetCar();
@@ -755,6 +1039,11 @@ function enableFreeRoam() {
     gameState.isPlaying = false;
     messageElement.style.display = 'none';
     timerElement.style.display = 'none';
+
+    // Show mobile controls in free roam
+    if (mobileControls.container) {
+        mobileControls.container.style.display = 'block';
+    }
 
     // Show free roam message
     const freeRoamMessage = document.createElement('div');
