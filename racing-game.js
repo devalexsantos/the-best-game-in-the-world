@@ -316,36 +316,40 @@ function createMobileControls() {
         pointer-events: all;
     `;
 
-    // Create action buttons
-    const btnAccelerate = createControlButton('GAS', 'accelerate', {
-        position: 'relative',
-        width: '80px',
-        height: '80px',
-        marginBottom: '10px',
-        backgroundColor: 'rgba(0, 200, 0, 0.5)',
-        fontSize: '18px'
-    });
-
-    const btnBrake = createControlButton('BRAKE', 'brake', {
-        position: 'relative',
-        width: '80px',
-        height: '80px',
-        marginBottom: '10px',
-        backgroundColor: 'rgba(200, 0, 0, 0.5)',
-        fontSize: '16px'
-    });
-
+    // Create action buttons - vertically stacked
     const btnDrift = createControlButton('DRIFT', 'drift', {
-        position: 'relative',
+        position: 'absolute',
+        bottom: '140px',
+        right: '0px',
         width: '80px',
-        height: '80px',
+        height: '60px',
         backgroundColor: 'rgba(200, 200, 0, 0.5)',
         fontSize: '16px'
     });
 
-    rightControls.appendChild(btnAccelerate);
-    rightControls.appendChild(btnBrake);
+    const btnBrake = createControlButton('BRAKE', 'brake', {
+        position: 'absolute',
+        bottom: '70px',
+        right: '0px',
+        width: '80px',
+        height: '60px',
+        backgroundColor: 'rgba(200, 0, 0, 0.5)',
+        fontSize: '16px'
+    });
+
+    const btnAccelerate = createControlButton('GAS', 'accelerate', {
+        position: 'absolute',
+        bottom: '0px',
+        right: '0px',
+        width: '80px',
+        height: '60px',
+        backgroundColor: 'rgba(0, 200, 0, 0.5)',
+        fontSize: '18px'
+    });
+
     rightControls.appendChild(btnDrift);
+    rightControls.appendChild(btnBrake);
+    rightControls.appendChild(btnAccelerate);
 
     // Add mobile control instructions
     const instructions = document.createElement('div');
